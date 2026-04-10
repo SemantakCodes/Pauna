@@ -64,6 +64,8 @@ public class PlayerController : MonoBehaviour
 
         playerCamera.transform.localRotation = Quaternion.Euler(rotationX, 0, 0);
         transform.Rotate(Vector3.up * mouseX * lookSpeed * sensitivityMultiplier);
+
+        //Rotate Light with it
     }
 
     private void ApplyGravity()
@@ -78,11 +80,9 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    // =========================
-    // 🎮 HORROR GAME FEATURES
-    // =========================
+    
 
-    // Walking toggle (slow pacing horror style)
+    
     public void SetWalking(bool walking)
     {
         walkSpeed = walking ? 5f : 2.5f;
@@ -103,11 +103,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    // =========================
-    // 🧠 FUTURE SYSTEMS (PLACEHOLDERS)
-    // =========================
-
-    // Interaction system (doors, items, etc.)
+    
     public void Interact()
     {
         Debug.Log("Interact triggered");
