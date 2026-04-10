@@ -2,88 +2,126 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    public float walkingSpeed = 7.5f;
-    public float runningSpeed = 11.5f;
-    public float gravity = 20.0f;
+    [Header("Movement")]
+    public float walkSpeed = 5f;
+    public float crouchSpeed = 2.5f;
+    public float gravity = 20f;
+
+    [Header("Camera")]
     public Camera playerCamera;
-    public float lookSpeed = 2.0f;
-    public float lookXLimit = 45.0f;
-    private float normalSpeed = 7.5f;
-    private float crouchSpeed = 4.0f;
+    public float lookSpeed = 2f;
+    public float lookXLimit = 45f;
 
+    [Header("Crouch")]
     private Vector3 crouchScale = new Vector3(1, 0.5f, 1);
-    private Vector3 playerScale = new Vector3(1, 1, 1);
+    private Vector3 standScale = new Vector3(1, 1, 1);
 
-    [HideInInspector]
-    public Vector2 RunAxis;
-    [HideInInspector]
-    public Vector2 LookAxis;
+    [Header("Input (Set from Joystick / Touch)")]
+    public Vector2 moveInput;
+    public Vector2 lookInput;
 
-    CharacterController characterController;
-    Vector3 moveDirection = Vector3.zero;
-    float rotationX = 0;
+    private CharacterController controller;
+    private Vector3 moveDirection = Vector3.zero;
+    private float rotationX = 0;
 
-    [HideInInspector]
-    public bool canMove = true;
-
-    [Header("ButtonAssign")]
-    public GameObject walk_Btn;
-    public GameObject jump_Button;
-    public GameObject crouch_Button;
-    public GameObject stand_button;
-
+    private bool isCrouching = false;
 
     void Start()
     {
-        characterController = GetComponent<CharacterController>();
+        controller = GetComponent<CharacterController>();
     }
 
     void Update()
-    {      
-        Vector3 forward = transform.TransformDirection(Vector3.forward);
-        Vector3 right = transform.TransformDirection(Vector3.right);
-        bool isRunning = Input.GetKey(KeyCode.LeftShift);
-        float curSpeedX = canMove ? (isRunning ? runningSpeed : walkingSpeed) * RunAxis.y : 0;
-        float curSpeedY = canMove ? (isRunning ? runningSpeed : walkingSpeed) * RunAxis.x : 0;
-        float movementDirectionY = moveDirection.y;
-        moveDirection = (forward * curSpeedX) + (right * curSpeedY);
-        moveDirection.y = movementDirectionY;
-        
-        
-       
-        characterController.Move(moveDirection * Time.deltaTime);
+    {
+        HandleMovement();
+        HandleMouseLook();
+        ApplyGravity();
+    }
 
-        
-        if (canMove)
+    void HandleMovement()
+    {
+        Vector3 forward = transform.forward;
+        Vector3 right = transform.right;
+
+        float speed = isCrouching ? crouchSpeed : walkSpeed;
+
+        Vector3 move = (forward * moveInput.y + right * moveInput.x) * speed;
+
+        moveDirection.x = move.x;
+        moveDirection.z = move.z;
+
+        controller.Move(moveDirection * Time.deltaTime);
+    }
+
+    void HandleMouseLook()
+    {
+        // For testing (PC)
+        float mouseX = lookInput.x != 0 ? lookInput.x : Input.GetAxis("Mouse X");
+        float mouseY = lookInput.y != 0 ? lookInput.y : Input.GetAxis("Mouse Y");
+
+        rotationX -= mouseY * lookSpeed;
+        rotationX = Mathf.Clamp(rotationX, -lookXLimit, lookXLimit);
+
+        playerCamera.transform.localRotation = Quaternion.Euler(rotationX, 0, 0);
+        transform.Rotate(Vector3.up * mouseX * lookSpeed);
+    }
+
+    void ApplyGravity()
+    {
+        if (!controller.isGrounded)
         {
-            rotationX += -LookAxis.y * lookSpeed;
-            rotationX = Mathf.Clamp(rotationX, -lookXLimit, lookXLimit);
-            playerCamera.transform.localRotation = Quaternion.Euler(rotationX, 0, 0);
-            transform.rotation *= Quaternion.Euler(0, LookAxis.x * lookSpeed, 0);
+            moveDirection.y -= gravity * Time.deltaTime;
+        }
+        else
+        {
+            moveDirection.y = -1f; // keeps grounded
         }
     }
 
-    public void Walk()
+    // =========================
+    // 🎮 HORROR GAME FEATURES
+    // =========================
+
+    // Walking toggle (slow pacing horror style)
+    public void SetWalking(bool walking)
     {
-        walkingSpeed = normalSpeed;
-        walk_Btn.SetActive(false);
+        walkSpeed = walking ? 5f : 2.5f;
     }
 
-    public void Crouch()
+    // Crouch system
+    public void ToggleCrouch()
     {
-        transform.localScale = crouchScale;
-        transform.position = new Vector3(transform.position.x, transform.position.y - 0.5f, transform.position.z);
-        walkingSpeed = crouchSpeed;
-        stand_button.SetActive(true);
-        crouch_Button.SetActive(false);
+        isCrouching = !isCrouching;
+
+        if (isCrouching)
+        {
+            transform.localScale = crouchScale;
+        }
+        else
+        {
+            transform.localScale = standScale;
+        }
     }
 
-    public void Stand()
+    // =========================
+    // 🧠 FUTURE SYSTEMS (PLACEHOLDERS)
+    // =========================
+
+    // Interaction system (doors, items, etc.)
+    public void Interact()
     {
-        transform.localScale = playerScale;
-        transform.position = new Vector3(transform.position.x, transform.position.y + 0.5f, transform.position.z);
-        walkingSpeed = crouchSpeed;
-        stand_button.SetActive(false);
-        crouch_Button.SetActive(true);
+        Debug.Log("Interact triggered");
+        // TODO: Raycast + interactable objects
+    }
+
+    // Mobile touch input hookup
+    public void SetMoveInput(Vector2 input)
+    {
+        moveInput = input;
+    }
+
+    public void SetLookInput(Vector2 input)
+    {
+        lookInput = input;
     }
 }
