@@ -18,6 +18,9 @@ public class MobileInput : MonoBehaviour
         player.SetMoveInput(joyStick.InputDirection);
 
         // Camera input
-        player.SetLookInput(touchField.TouchDist);
+        player.SetLookInput(Vector2.Lerp(
+        player.lookInput,
+        touchField.TouchDist * 0.2f,
+        Time.deltaTime * 10f));
     }
 }

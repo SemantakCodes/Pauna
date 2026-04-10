@@ -3,42 +3,41 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     [Header("Movement")]
-    public float walkSpeed = 5f;
-    public float crouchSpeed = 2.5f;
-    public float gravity = 20f;
+    [SerializeField] public float walkSpeed = 5f;
+    [SerializeField] public float crouchSpeed = 2.5f;
+    [SerializeField] public float gravity = 20f;
 
     [Header("Camera")]
-    public Camera playerCamera;
-    public float lookSpeed = 2f;
-    public float lookXLimit = 45f;
+    [SerializeField] public Camera playerCamera;
+    [SerializeField] public float lookSpeed = 2f;
 
     [Header("Crouch")]
-    private Vector3 crouchScale = new Vector3(1, 0.5f, 1);
-    private Vector3 standScale = new Vector3(1, 1, 1);
+    [SerializeField] private Vector3 crouchScale = new Vector3(1, 0.5f, 1);
+    [SerializeField] private Vector3 standScale = new Vector3(1, 1, 1);
 
     [Header("Input (Set from Joystick / Touch)")]
-    public Vector2 moveInput;
-    public Vector2 lookInput;
+    [SerializeField] public Vector2 moveInput;
+    [SerializeField] public Vector2 lookInput;
 
-    private CharacterController controller;
-    private Vector3 moveDirection = Vector3.zero;
-    private float rotationX = 0;
+    [SerializeField] private CharacterController controller;
+    [SerializeField] private Vector3 moveDirection = Vector3.zero;
+    [SerializeField] private float rotationX = 0;
 
-    private bool isCrouching = false;
+    [SerializeField] private bool isCrouching = false;
 
-    void Start()
+    private void Start()
     {
         controller = GetComponent<CharacterController>();
     }
 
-    void Update()
+    private void Update()
     {
         HandleMovement();
-        HandleMouseLook();
+        MouseLook();
         ApplyGravity();
     }
 
-    void HandleMovement()
+    private void HandleMovement()
     {
         Vector3 forward = transform.forward;
         Vector3 right = transform.right;
@@ -52,21 +51,22 @@ public class PlayerController : MonoBehaviour
 
         controller.Move(moveDirection * Time.deltaTime);
     }
-
-    void HandleMouseLook()
+    private void MouseLook()
     {
-        // For testing (PC)
-        float mouseX = lookInput.x != 0 ? lookInput.x : Input.GetAxis("Mouse X");
-        float mouseY = lookInput.y != 0 ? lookInput.y : Input.GetAxis("Mouse Y");
+        float mouseX = lookInput.x;
+        float mouseY = lookInput.y;
 
-        rotationX -= mouseY * lookSpeed;
-        rotationX = Mathf.Clamp(rotationX, -lookXLimit, lookXLimit);
+        //  Increase sensitivity for mobile
+        float sensitivityMultiplier = 5f;
+
+        rotationX -= mouseY * lookSpeed * sensitivityMultiplier;
+        rotationX = Mathf.Clamp(rotationX, -90, 90);
 
         playerCamera.transform.localRotation = Quaternion.Euler(rotationX, 0, 0);
-        transform.Rotate(Vector3.up * mouseX * lookSpeed);
+        transform.Rotate(Vector3.up * mouseX * lookSpeed * sensitivityMultiplier);
     }
 
-    void ApplyGravity()
+    private void ApplyGravity()
     {
         if (!controller.isGrounded)
         {

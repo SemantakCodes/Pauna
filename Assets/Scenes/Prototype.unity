@@ -2230,19 +2230,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e7ff37c66269f8c47a80d14d2f1529f5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
-  walkingSpeed: 7.5
-  runningSpeed: 11.5
+  walkSpeed: 5
+  crouchSpeed: 4
   gravity: 20
   playerCamera: {fileID: 330585545}
   lookSpeed: 0.05
   lookXLimit: 45
-  RunAxis: {x: 0, y: 0}
-  LookAxis: {x: 0, y: 0}
-  canMove: 1
-  walk_Btn: {fileID: 0}
-  jump_Button: {fileID: 0}
-  crouch_Button: {fileID: 0}
-  stand_button: {fileID: 0}
+  crouchScale: {x: 1, y: 0.5, z: 1}
+  standScale: {x: 1, y: 1, z: 1}
+  moveInput: {x: 0, y: 0}
+  lookInput: {x: 0, y: 0}
+  controller: {fileID: 0}
+  moveDirection: {x: 0, y: 0, z: 0}
+  rotationX: 0
+  isCrouching: 0
 --- !u!114 &677876256
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2256,7 +2257,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MobileInput
   joyStick: {fileID: 1785523792}
-  TouchField: {fileID: 1258912919}
+  touchField: {fileID: 1258912919}
 --- !u!43 &691873565
 Mesh:
   m_ObjectHideFlags: 0
@@ -2653,6 +2654,7 @@ GameObject:
   - component: {fileID: 791606524}
   - component: {fileID: 791606523}
   - component: {fileID: 791606522}
+  - component: {fileID: 791606526}
   m_Layer: 0
   m_Name: Stairs
   m_TagString: Untagged
@@ -4517,6 +4519,28 @@ MonoBehaviour:
   m_SelectedFaces: 
   m_SelectedEdges: []
   m_SelectedVertices: 
+--- !u!64 &791606526
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 791606519}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 1
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 1490097665}
 --- !u!1 &797615024
 GameObject:
   m_ObjectHideFlags: 0
@@ -6658,8 +6682,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FixedTouchField
   TouchDist: {x: 0, y: 0}
-  PointerOld: {x: 0, y: 0}
-  Pressed: 0
 --- !u!1 &1336205744
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,54 +1,26 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class FixedTouchField : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
+public class FixedTouchField : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDragHandler
 {
-    [HideInInspector]
     public Vector2 TouchDist;
-    [HideInInspector]
-    public Vector2 PointerOld;
-    [HideInInspector]
-    protected int PointerId;
-    [HideInInspector]
-    public bool Pressed;
 
-    void Start()
-    {
-
-    }
-
-    void Update()
-    {
-        if (Pressed)
-        {
-            if (PointerId >= 0 && PointerId < Input.touches.Length)
-            {
-                TouchDist = Input.touches[PointerId].position - PointerOld;
-                PointerOld = Input.touches[PointerId].position;
-            }
-            else
-            {
-                TouchDist = new Vector2(Input.mousePosition.x, Input.mousePosition.y) - PointerOld;
-                PointerOld = Input.mousePosition;
-            }
-        }
-        else
-        {
-            TouchDist = new Vector2();
-        }
-    }
+    private Vector2 pointerOld;
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        Pressed = true;
-        PointerId = eventData.pointerId;
-        PointerOld = eventData.position;
+        pointerOld = eventData.position;
     }
 
+    public void OnDrag(PointerEventData eventData)
+    {
+        Vector2 pointerNew = eventData.position;
+        TouchDist = pointerNew - pointerOld;
+        pointerOld = pointerNew;
+    }
 
     public void OnPointerUp(PointerEventData eventData)
     {
-        Pressed = false;
+        TouchDist = Vector2.zero;
     }
-    
 }
