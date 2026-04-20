@@ -12,7 +12,7 @@ Will you find the keys before it finds you?
 
 ## 🔗 Links & Downloads
 
-* 🎮 **Play the Game:** [Play on Itch.io](COMING-SOON)
+* 🎮 **Play the Game:** [Play on Itch.io](https://semantakcodes.itch.io/pauna)
 * 📁 **Download Project Files:** [Mega.nz Link]( https://mega.nz/folder/neRHyBwA#HPffxPMfvjY-ztg0nIvP7A )
 * 🌐 **Developer Website:** [Visit my Website](https://semantak.vercel.app)
 
